@@ -1,3918 +1,838 @@
 ---
-title: Swagger Petstore v1.0.0
-language_tabs:
-  - shell: Shell
-  - http: HTTP
-  - javascript: JavaScript
-  - javascript--nodejs: Node.JS
-  - ruby: Ruby
-  - python: Python
-  - java: Java
-  - go: Go
-toc_footers:
-  - >-
-    <a href="https://mermade.github.io/shins/asyncapi.html">See AsyncAPI
-    example</a>
-includes: []
-search: true
-highlight_theme: darkula
-headingLevel: 2
+title: Revo API Factoring Documentation
 
+language_tabs: # must be one of https://git.io/vQNgJ
+  - ruby--tab: Ruby
+  - java: Java
+
+toc_footers:
+- <a href='https://revo.ru/'>Revo.ru</a>
+- <a href='https://revo.ru/API/en'>API Documentation in English</a>
+
+#includes:
+#- business
+
+search: true
 ---
 
-<h1 id="Swagger-Petstore">Swagger Petstore v1.0.0</h1>
+# Введение
 
-> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+API Factoring реализовано на протоколе HTTPS на основе JSON запросов (application/x-www-form-urlencoded).
 
-:dog: :cat: :rabbit: This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.
+Документация состоит из 3 основных частей:
 
-Base URLs:
+* Описание авторизации, методов API и кодов ошибок.
+* <a href="#db947828e5">Руководство по тестированию</a>.
+* <a href="#guides">Руководство по реализации основных элементов</a>.
 
-* <a href="http://petstore.swagger.io/v2">http://petstore.swagger.io/v2</a>
+# Авторизация
 
-<a href="http://swagger.io/terms/">Terms of service</a>
-Email: <a href="mailto:apiteam@swagger.io">Support</a> 
-License: <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0</a>
-
-# Authentication
-
-- oAuth2 authentication. 
-
-    - Flow: implicit
-    - Authorization URL = [http://petstore.swagger.io/oauth/dialog](http://petstore.swagger.io/oauth/dialog)
-
-|Scope|Scope Description|
-|---|---|
-|write:pets|modify pets in your account|
-|read:pets|read your pets|
-
-* API Key (api_key)
-    - Parameter Name: **api_key**, in: header. 
-
-<h1 id="Swagger-Petstore-pet">pet</h1>
-
-Everything about your Pets
-
-<a href="http://swagger.io">Find out more</a>
-
-## addPet
-
-<a id="opIdaddPet"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
+## Базовые URL адреса
 
 ```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
+BASE_URL = "https://r.revoplus.ru/"
+BASE_URL = "https://demo.revoplus.ru/"
 ```
 
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
+1. Для взаимодействия с сервисами Рево используются 2 базовых адреса:
+ * https://r.revoplus.ru/ - адрес `production` сервиса.
+ * https://demo.revoup.ru/ - адрес `demo` сервиса.
+2. `BASE_URL` - переменная обозначающая базовый адрес.
 
-};
-
-fetch('http://petstore.swagger.io/v2/pet',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet`
-
-*Add a new pet to the store*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}
-```
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
-
-<h3 id="addPet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Pet](#schemapet)|true|Pet object that needs to be added to the store|
-
-<h3 id="addPet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Invalid input|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
+<aside class="notice">
+Подключение должно производиться только по протоколу HTTPS  - при попытке подключения по HTTP будет возникать 404 ошибка.
 </aside>
 
-## updatePet
+## Параметры авторизации
 
-<a id="opIdupdatePet"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X PUT http://petstore.swagger.io/v2/pet \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-PUT http://petstore.swagger.io/v2/pet HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
+> Пример параметров
 
 ```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet',
-  method: 'put',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
+secret_key = "098f6bcd4621d373cade4e832627b4f6"
+STORE_ID1 = 12
+STORE_ID2 = 13
 ```
 
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
-    }
-  ],
-  "status": "available"
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Authorization':'Bearer {access-token}'
+1. На стороне Рево формируются уникальный идентификатор магазина и секретный ключ, которые передаются партнеру:
+ * `store_id` - уникальный идентификатор магазина. Для одного партнера может быть сформировано несколько уникальных идентификаторов, чаще всего, не менее 2. `STORE_ID1` используется для методов `Registration` и `Limit`. `STORE_ID2` - для всех остальных методов.
+ * `secret_key` - секретный ключ, который используется при формировании электронно-цифровой подписи для аутентификации (проверки подлинности) параметров запроса с целью защиты формы от запуска сторонними лицами. Длина ключа от 8 байт. Алгоритм шифрования SHA1.
+2. Для авторизации партнер отправляет `POST` запрос, используя <a href="#1c37860b3b">цифровую подпись</a> `signature` и уникальный идентификатор магазина `store_id`.
+3. Примеры URL запросов можно посмотреть в разделе <a href="#api"> Методы API</a>.
 
-};
+## Принцип формирования цифровой подписи
 
-fetch('http://petstore.swagger.io/v2/pet',
-{
-  method: 'PUT',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
+> Алгоритм формирования цифровой подписи
 
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.put 'http://petstore.swagger.io/v2/pet',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.put('http://petstore.swagger.io/v2/pet', params={
-
-}, headers = headers)
-
-print r.json()
-
+```ruby--tab
+require 'digest/sha1'
+secret_key = '098f6bcd4621d373cade4e832627b4f6'
+data = "{\"callback_url\":\"https://shop.ru/revo/decision\",
+\"redirect_url\":\"https://shop.ru/revo/redirect\",
+\"current_order\":{\"sum\":\"7500.00\",\"order_id\":\"R001233\"},
+\"primary_phone\":\"9268180621\"}"
+SIGNATURE = Digest::SHA1.hexdigest(data + secret_key)
 ```
 
 ```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("PUT");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 
-```
+public class Main {
 
-```go
-package main
+    static String secret_key = "098f6bcd4621d373cade4e832627b4f6"; // Это пример
+    static String data = "{\"callback_url\":\"https://shop.ru/revo/decision\",\"redirect_url\":\"https://shop.ru/revo/redirect\",\"current_order\":{\"sum\":\"7500.00\",\"order_id\":\"R001233\"},\"primary_phone\":\"9268180621\"}";
 
-import (
-       "bytes"
-       "net/http"
-)
+    public static void main(String[] args) {
 
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
+        String signature = encryptPassword(data + secret_key); // Тут всегда будет 40 символов по SHA1
+        System.out.println(signature);
     }
 
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("PUT", "http://petstore.swagger.io/v2/pet", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`PUT /pet`
-
-*Update an existing pet*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "string"
+    private static String encryptPassword(String password) {
+        String sha1 = "";
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(password.getBytes("UTF-8"));
+            sha1 = byteToHex(crypt.digest());
+        } catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch(UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return sha1;
     }
-  ],
-  "status": "available"
+
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
 }
 ```
 
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
+К строке `data` в формате json добавляется секретный ключ `secret_key`. К получившейся строке применяется алгоритм SHA1, в результате формируется цифровая подпись `signature`.
 
-<h3 id="updatePet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Pet](#schemapet)|true|Pet object that needs to be added to the store|
-
-<h3 id="updatePet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Validation exception|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
+<aside class="notice">
+Необходимо обратить внимание, что при формировании signature длина всегда будет 40 символов по SHA1.
 </aside>
 
-## findPetsByStatus
+# Методы API
 
-<a id="opIdfindPetsByStatus"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/findByStatus?status=available \
-  -H 'Accept: application/xml' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/findByStatus?status=available HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/findByStatus',
-  method: 'get',
-  data: '?status=available',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/findByStatus?status=available',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
+## Registration
 
 ```ruby
-require 'rest-client'
-require 'json'
+POST BASE_URL/factoring/v1/limit/auth?store_id=STORE_ID1&signature=SIGNATURE
+```
 
-headers = {
-  'Accept' => 'application/xml',
-  'Authorization' => 'Bearer {access-token}'
+Метод возвращает ссылку на iFrame для получения лимита. По завершению формы на адрес указанный в `callback_url` отправляется <a href="#callback_url2">json ответ</a> с результатом решения по лимиту клиента.
+
+В зависимости от информации, которая есть о пользователе в системе Рево, форма будет иметь различное число шагов (для этого нужно передавать `primary_phone`):
+
+* Если номер телефона клиента не найден в базе Рево (новый клиент), либо расчёт лимита ещё не производился, то форма будет состоять из 2 шагов: регистрации (расчёта лимита) и аутентификации по смс.
+* Если номер телефона клиента найден в базе Рево (повторный клиент) и клиенту уже рассчитан лимит, то форма будет состоять из 1 шага: аутентификации по смс.
+
+<aside class="success">
+Если клиент уже заполнял личные данные на сайте партнёра, их следует передать в запросе для автозаполнения соответствующих полей формы.
+</aside>
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  callback_url: "https://shop.ru/revo/decision",
+  redirect_url: "https://shop.ru/revo/redirect",
+  primary_phone: "9268180621",
+  primary_email: "ivan@gmail.com",
+  current_order: {
+    order_id: "R001233"
+  },
+  person: {
+    first_name: "Петр",
+    surname: "Чернышев",
+    patronymic: "Александрович",
+    birth_date: "15.01.1975"
+  }
 }
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/findByStatus',
-  params: {
-  'status' => 'array[string]'
-}, headers: headers
-
-p JSON.parse(result)
-
 ```
 
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'Authorization': 'Bearer {access-token}'
+| | | |
+-:|-:|:-|:-
+ |**callback_url**<br> <font color="#939da3">string</font> | <td colspan="2"> URL для ответа от Рево по решению для клиента.
+ |**redirect_url**<br> <font color="#939da3">string</font>	| <td colspan="2"> URL для редиректа после нажатия на кнопку/ссылку в форме Рево "Вернуться в интернет магазин".
+ |**current_order**<br> <font color="#939da3">object</font> | <td colspan="2"> Объект, содержащий информацию о заказе.
+<td colspan="2" style="text-align:right">**order_id**<br> <font color="#939da3">string</font> | | Уникальный номер заказа. Не более 255 символов. Можно использовать уникальную случайную строку.
+ |**primary_phone**<br> <font color="#939da3">integer, *optional*</font> | <td colspan="2"> Номер телефона клиента 10 цифр (без кода страны).
+ |**primary_email**<br> <font color="#939da3">string, *optional*</font> | <td colspan="2"> Email клиента.
+ |**person**<br> <font color="#939da3">object, *optional*</font> | <td colspan="2"> Объект, содержащий информацию о клиенте.
+  <td colspan="2" style="text-align:right">**first_name**<br> <font color="#939da3">string, *optional*</font> | | Имя клиента.
+  <td colspan="2" style="text-align:right">**surname**<br> <font color="#939da3">sring, *optional*</font> | | Фамилия клиента.
+  <td colspan="2" style="text-align:right">**patronymic**<br> <font color="#939da3">string, *optional*</font> | | Отчество клиента.
+  <td colspan="2" style="text-align:right">**birth_date**<br> <font color="#939da3">object, *optional*</font> | | Дата рождения клиента в формате `dd.mm.yyyy`.
+
+### Response Parameters
+
+> Пример ответа для успешной аутентификации.
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  iframe_url: "https://r.revoplus.ru/form/v1/af45ef12f4233f"
 }
-
-r = requests.get('http://petstore.swagger.io/v2/pet/findByStatus', params={
-  'status': [
-  "available"
-]
-}, headers = headers)
-
-print r.json()
-
 ```
 
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/findByStatus?status=available");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
+ | |
+-:|:-
+**status** <br> <font color="#939da3">integer</font> | Код ответа.
+**message** <br> <font color="#939da3">string</font> | Короткое текстовое описание ответа.
+**iframe_url** <br> <font color="#939da3">string</font>	| Cсылка на сгенерированный iFrame.
+
+<a name="callback_url"></a>
+### callback parameters
+
+> Пример callback-а при успешном завершении формы:
+
+```jsonnet
+{
+  "order_id": 32423,
+  "decision": "approved",
+  "amount": 5000,
+  "overlimit": "true",
+  "mobile_phone": "89262341793",
+  "email": "ivan@gmail.com",
+  "loan_id": 3216964
 }
-in.close();
-System.out.println(response.toString());
-
 ```
 
-```go
-package main
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+**decision** <br> <font color="#939da3">string</font> | Решение по выдаче рассрочки. При положительном решении - значение `approved` (заявка ожидает финализации). При отрицательном решении - `declined`.
+**amount** <br> <font color="#939da3">float</font> | Сумма в рублях с копейками.
+**overlimit** <br> <font color="#939da3">integer</font> | Срок рассрочки в месяцах.
+**mobile_phone** <br> <font color="#939da3">integer</font> | Номер телефона клиента 10 цифр (без кода страны).
+**email** <br> <font color="#939da3">string</font> | Номер телефона клиента 10 цифр (без кода страны).
+**loan_id**  <br> <font color="#939da3">integer</font> | Уникальный номер заказа в системе Рево.
 
-import (
-       "bytes"
-       "net/http"
-)
+<aside class="success">
+При `decision` равном `declined` значение `amount` будет нулевое.
+</aside>
 
-func main() {
+## Limit
 
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/findByStatus", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
+```ruby
+POST BASE_URL/api/external/v1/client/limit?store_id=STORE_ID1&signature=SIGNATURE
 ```
 
-`GET /pet/findByStatus`
+Метод для получения суммы лимита клиента по номеру его телефона. Для новых клиентов получить информацию о лимите только по номеру телефона нельзя.
 
-*Finds Pets by status*
+### Parameters
 
-Multiple status values can be provided with comma separated strings
+> Пример запроса в формате json
 
-<h3 id="findPetsByStatus-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|status|query|array[string]|true|Status values that need to be considered for filter|
-
-#### Enumerated Values
-
-|Parameter|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<id>0</id>
-<category>
-  <id>0</id>
-  <name>string</name>
-</category>
-<name>doggie</name>
-<photoUrls>string</photoUrls>
-<tags>
-  <id>0</id>
-  <name>string</name>
-</tags>
-<status>available</status>
-```
-
-```json
-[
+```jsonnet
+{
+  client:
   {
-    "id": 0,
-    "category": {
-      "id": 0,
-      "name": "string"
+    mobile_phone: "9031234567"
+  }
+}
+```
+
+ | |
+-:|:-
+**client** <br> <font color="#939da3">object</font> | Объект, содержащий информацию о клиенте.
+**mobile_phone** <br> <font color="#939da3">integer</font> | Номер телефона клиента 10 цифр (без кода страны).
+
+### Response Parameters
+
+> Пример ответа, когда клиент найден в базе
+
+```jsonnet
+{
+    meta:
+    {
+      status: 0,
+      message: "Payload valid"
     },
-    "name": "doggie",
-    "photoUrls": [
-      "string"
-    ],
-    "tags": [
-      {
-        "id": 0,
-        "name": "string"
-      }
-    ],
-    "status": "available"
-  }
-]
-```
-
-<h3 id="findPetsByStatus-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid status value|None|
-
-<h3 id="findPetsByStatus-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|*anonymous*|[[Pet](#schemapet)]|false|No description|
-|» id|integer(int64)|false|No description|
-|» category|[Category](#schemacategory)|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» name|string|true|No description|
-|» photoUrls|[string]|true|No description|
-|» tags|[[Tag](#schematag)]|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» status|string|false|pet status in the store|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## findPetsByTags
-
-<a id="opIdfindPetsByTags"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/findByTags?tags=string \
-  -H 'Accept: application/xml' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/findByTags?tags=string HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/findByTags',
-  method: 'get',
-  data: '?tags=string',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/findByTags?tags=string',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/findByTags',
-  params: {
-  'tags' => 'array[string]'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/pet/findByTags', params={
-  'tags': [
-  "string"
-]
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/findByTags?tags=string");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
+    client:
+    {
+      mobile_phone: "9031234567",
+      limit_amount: "9500.00",
+      status: "active"
     }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/findByTags", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
 }
-
 ```
 
-`GET /pet/findByTags`
+> Пример ответа, когда клиент найден в базе, но выдача займа невозможна
 
-*Finds Pets by tags*
-
-Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-
-<h3 id="findPetsByTags-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|tags|query|array[string]|true|Tags to filter by|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<id>0</id>
-<category>
-  <id>0</id>
-  <name>string</name>
-</category>
-<name>doggie</name>
-<photoUrls>string</photoUrls>
-<tags>
-  <id>0</id>
-  <name>string</name>
-</tags>
-<status>available</status>
-```
-
-```json
-[
-  {
-    "id": 0,
-    "category": {
-      "id": 0,
-      "name": "string"
+```jsonnet
+{
+    meta:
+    {
+      status: 0,
+      message: "Payload valid"
     },
-    "name": "doggie",
-    "photoUrls": [
-      "string"
-    ],
-    "tags": [
-      {
-        "id": 0,
-        "name": "string"
-      }
-    ],
-    "status": "available"
-  }
-]
-```
-
-<h3 id="findPetsByTags-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid tag value|None|
-
-<h3 id="findPetsByTags-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|*anonymous*|[[Pet](#schemapet)]|false|No description|
-|» id|integer(int64)|false|No description|
-|» category|[Category](#schemacategory)|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» name|string|true|No description|
-|» photoUrls|[string]|true|No description|
-|» tags|[[Tag](#schematag)]|false|No description|
-|»» id|integer(int64)|false|No description|
-|»» name|string|false|No description|
-|» status|string|false|pet status in the store|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## getPetById
-
-<a id="opIdgetPetById"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/pet/{petId} \
-  -H 'Accept: application/xml' \
-  -H 'api_key: API_KEY'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml',
-  'api_key':'API_KEY'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml',
-  'api_key':'API_KEY'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml',
-  'api_key' => 'API_KEY'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml',
-  'api_key': 'API_KEY'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        "api_key": []string{"API_KEY"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /pet/{petId}`
-
-*Find pet by ID*
-
-Returns a single pet
-
-<h3 id="getPetById-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet to return|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Pet>
-  <id>0</id>
-  <category>
-    <id>0</id>
-    <name>string</name>
-  </category>
-  <name>doggie</name>
-  <photoUrls>string</photoUrls>
-  <tags>
-    <id>0</id>
-    <name>string</name>
-  </tags>
-  <status>available</status>
-</Pet>
-```
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
+    client:
     {
-      "id": 0,
-      "name": "string"
+      mobile_phone: "9031234567",
+      limit_amount: "6700.00",
+      status: "inactive"
     }
-  ],
-  "status": "available"
 }
 ```
 
-<h3 id="getPetById-responses">Responses</h3>
+> Пример ответа, когда клиент не найден в базе
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Pet](#schemapet)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-api_key
-</aside>
-
-## updatePetWithForm
-
-<a id="opIdupdatePetWithForm"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet/{petId} \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/x-www-form-urlencoded
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/x-www-form-urlencoded',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "name": "string",
-  "status": "string"
-}';
-const headers = {
-  'Content-Type':'application/x-www-form-urlencoded',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
+```jsonnet
 {
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/x-www-form-urlencoded',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/x-www-form-urlencoded',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/x-www-form-urlencoded"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet/{petId}`
-
-*Updates a pet in the store with form data*
-
-> Body parameter
-
-```yaml
-name: string
-status: string
-
-```
-
-<h3 id="updatePetWithForm-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet that needs to be updated|
-|body|body|object|false|No description|
-|» name|body|string|false|Updated name of the pet|
-|» status|body|string|false|Updated status of the pet|
-
-<h3 id="updatePetWithForm-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|Invalid input|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## deletePet
-
-<a id="opIddeletePet"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/pet/{petId} \
-  -H 'api_key: string' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/pet/{petId} HTTP/1.1
-Host: petstore.swagger.io
-
-api_key: string
-
-```
-
-```javascript
-var headers = {
-  'api_key':'string',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}',
-  method: 'delete',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'api_key':'string',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}',
-{
-  method: 'DELETE',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'api_key' => 'string',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.delete 'http://petstore.swagger.io/v2/pet/{petId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'api_key': 'string',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.delete('http://petstore.swagger.io/v2/pet/{petId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "api_key": []string{"string"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/pet/{petId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /pet/{petId}`
-
-*Deletes a pet*
-
-<h3 id="deletePet-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|api_key|header|string|false|No description|
-|petId|path|integer(int64)|true|Pet id to delete|
-
-<h3 id="deletePet-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Pet not found|None|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-## uploadFile
-
-<a id="opIduploadFile"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/pet/{petId}/uploadImage \
-  -H 'Content-Type: multipart/form-data' \
-  -H 'Accept: application/json' \
-  -H 'Authorization: Bearer {access-token}'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/pet/{petId}/uploadImage HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: multipart/form-data
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'multipart/form-data',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "additionalMetadata": "string",
-  "file": "string"
-}';
-const headers = {
-  'Content-Type':'multipart/form-data',
-  'Accept':'application/json',
-  'Authorization':'Bearer {access-token}'
-
-};
-
-fetch('http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'multipart/form-data',
-  'Accept' => 'application/json',
-  'Authorization' => 'Bearer {access-token}'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/pet/{petId}/uploadImage',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'multipart/form-data',
-  'Accept': 'application/json',
-  'Authorization': 'Bearer {access-token}'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/pet/{petId}/uploadImage', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/pet/{petId}/uploadImage");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"multipart/form-data"},
-        "Accept": []string{"application/json"},
-        "Authorization": []string{"Bearer {access-token}"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/pet/{petId}/uploadImage", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /pet/{petId}/uploadImage`
-
-*uploads an image*
-
-> Body parameter
-
-```yaml
-additionalMetadata: string
-file: string
-
-```
-
-<h3 id="uploadFile-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|petId|path|integer(int64)|true|ID of pet to update|
-|body|body|object|false|No description|
-|» additionalMetadata|body|string|false|Additional data to pass to server|
-|» file|body|string(binary)|false|file to upload|
-
-> Example responses
-
-```json
-{
-  "code": 0,
-  "type": "string",
-  "message": "string"
-}
-```
-
-<h3 id="uploadFile-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[ApiResponse](#schemaapiresponse)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-petstore_auth ( Scopes: write:pets read:pets )
-</aside>
-
-<h1 id="Swagger-Petstore-store">store</h1>
-
-Access to Petstore orders
-
-## getInventory
-
-<a id="opIdgetInventory"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/store/inventory \
-  -H 'Accept: application/json' \
-  -H 'api_key: API_KEY'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/store/inventory HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/json
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/json',
-  'api_key':'API_KEY'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/inventory',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/json',
-  'api_key':'API_KEY'
-
-};
-
-fetch('http://petstore.swagger.io/v2/store/inventory',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/json',
-  'api_key' => 'API_KEY'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/store/inventory',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json',
-  'api_key': 'API_KEY'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/store/inventory', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/inventory");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/json"},
-        "api_key": []string{"API_KEY"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/store/inventory", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /store/inventory`
-
-*Returns pet inventories by status*
-
-Returns a map of status codes to quantities
-
-> Example responses
-
-```json
-{
-  "property1": 0,
-  "property2": 0
-}
-```
-
-<h3 id="getInventory-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|Inline|
-
-<h3 id="getInventory-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|» **additionalProperties**|integer(int32)|false|No description|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-api_key
-</aside>
-
-## placeOrder
-
-<a id="opIdplaceOrder"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/store/order \
-  -H 'Content-Type: application/json' \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/store/order HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/store/order',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json',
-  'Accept' => 'application/xml'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/store/order',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/xml'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/store/order', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        "Accept": []string{"application/xml"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/store/order", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /store/order`
-
-*Place an order for a pet*
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}
-```
-
-<h3 id="placeOrder-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[Order](#schemaorder)|true|order placed for purchasing the pet|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Order>
-  <id>0</id>
-  <petId>0</petId>
-  <quantity>0</quantity>
-  <shipDate>2018-04-24T13:02:08Z</shipDate>
-  <status>placed</status>
-  <complete>false</complete>
-</Order>
-```
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}
-```
-
-<h3 id="placeOrder-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Order](#schemaorder)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid Order|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## getOrderById
-
-<a id="opIdgetOrderById"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/store/order/{orderId} \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/store/order/{orderId} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/store/order/{orderId}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/store/order/{orderId}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order/{orderId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/store/order/{orderId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /store/order/{orderId}`
-
-*Find purchase order by ID*
-
-For valid response try integer IDs with value >= 1 and <= 10. Other values will generated exceptions
-
-<h3 id="getOrderById-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|orderId|path|integer(int64)|true|ID of pet that needs to be fetched|
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<Order>
-  <id>0</id>
-  <petId>0</petId>
-  <quantity>0</quantity>
-  <shipDate>2018-04-24T13:02:08Z</shipDate>
-  <status>placed</status>
-  <complete>false</complete>
-</Order>
-```
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}
-```
-
-<h3 id="getOrderById-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[Order](#schemaorder)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Order not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## deleteOrder
-
-<a id="opIddeleteOrder"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/store/order/{orderId}
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/store/order/{orderId} HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  method: 'delete',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-fetch('http://petstore.swagger.io/v2/store/order/{orderId}',
-{
-  method: 'DELETE'
-
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-result = RestClient.delete 'http://petstore.swagger.io/v2/store/order/{orderId}',
-  params: {
-  }
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-
-r = requests.delete('http://petstore.swagger.io/v2/store/order/{orderId}', params={
-
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/store/order/{orderId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/store/order/{orderId}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /store/order/{orderId}`
-
-*Delete purchase order by ID*
-
-For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors
-
-<h3 id="deleteOrder-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|orderId|path|integer(int64)|true|ID of the order that needs to be deleted|
-
-<h3 id="deleteOrder-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid ID supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Order not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-<h1 id="Swagger-Petstore-user">user</h1>
-
-Operations about user
-
-<a href="http://swagger.io">Find out more about our store</a>
-
-## createUser
-
-<a id="opIdcreateUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/user',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/user', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /user`
-
-*Create user*
-
-This can only be done by the logged in user.
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-<h3 id="createUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[User](#schemauser)|true|Created user object|
-
-<h3 id="createUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## createUsersWithArrayInput
-
-<a id="opIdcreateUsersWithArrayInput"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user/createWithArray \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user/createWithArray HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/createWithArray',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/createWithArray',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/user/createWithArray',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/user/createWithArray', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/createWithArray");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user/createWithArray", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /user/createWithArray`
-
-*Creates list of users with given input array*
-
-> Body parameter
-
-```json
-[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]
-```
-
-<h3 id="createUsersWithArrayInput-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[UserArray](#schemauserarray)|true|List of user object|
-
-<h3 id="createUsersWithArrayInput-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## createUsersWithListInput
-
-<a id="opIdcreateUsersWithListInput"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X POST http://petstore.swagger.io/v2/user/createWithList \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-POST http://petstore.swagger.io/v2/user/createWithList HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/createWithList',
-  method: 'post',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/createWithList',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.post 'http://petstore.swagger.io/v2/user/createWithList',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.post('http://petstore.swagger.io/v2/user/createWithList', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/createWithList");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("POST", "http://petstore.swagger.io/v2/user/createWithList", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`POST /user/createWithList`
-
-*Creates list of users with given input array*
-
-> Body parameter
-
-```json
-[
-  {
-    "id": 0,
-    "username": "string",
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "password": "string",
-    "phone": "string",
-    "userStatus": 0
-  }
-]
-```
-
-<h3 id="createUsersWithListInput-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|body|body|[UserArray](#schemauserarray)|true|List of user object|
-
-<h3 id="createUsersWithListInput-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## loginUser
-
-<a id="opIdloginUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/login',
-  method: 'get',
-  data: '?username=string&password=pa%24%24word',
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/user/login',
-  params: {
-  'username' => 'string',
-'password' => 'string(password)'
-}, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/user/login', params={
-  'username': 'string',  'password': 'pa$$word'
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/login?username=string&password=pa%24%24word");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/login", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /user/login`
-
-*Logs user into the system*
-
-<h3 id="loginUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|query|string|true|The user name for login|
-|password|query|string(password)|true|The password for login in clear text|
-
-> Example responses
-
-```json
-"string"
-```
-
-<h3 id="loginUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|string|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username/password supplied|None|
-
-### Response Headers
-
-|Status|Header|Type|Format|Description|
-|---|---|---|---|---|
-|200|X-Rate-Limit|integer|int32|calls per hour allowed by the user|
-|200|X-Expires-After|string|date-time|date in UTC when token expires|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## logoutUser
-
-<a id="opIdlogoutUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/logout
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/logout HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/logout',
-  method: 'get',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-fetch('http://petstore.swagger.io/v2/user/logout',
-{
-  method: 'GET'
-
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-result = RestClient.get 'http://petstore.swagger.io/v2/user/logout',
-  params: {
-  }
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-
-r = requests.get('http://petstore.swagger.io/v2/user/logout', params={
-
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/logout");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/logout", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /user/logout`
-
-*Logs out current logged in user session*
-
-<h3 id="logoutUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|default|Default|successful operation|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## getUserByName
-
-<a id="opIdgetUserByName"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X GET http://petstore.swagger.io/v2/user/{username} \
-  -H 'Accept: application/xml'
-
-```
-
-```http
-GET http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-
-Accept: application/xml
-
-```
-
-```javascript
-var headers = {
-  'Accept':'application/xml'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'get',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-const headers = {
-  'Accept':'application/xml'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Accept' => 'application/xml'
-}
-
-result = RestClient.get 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/xml'
-}
-
-r = requests.get('http://petstore.swagger.io/v2/user/{username}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Accept": []string{"application/xml"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("GET", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`GET /user/{username}`
-
-*Get user by user name*
-
-<h3 id="getUserByName-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|The name that needs to be fetched. Use user1 for testing. |
-
-> Example responses
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<User>
-  <id>0</id>
-  <username>string</username>
-  <firstName>string</firstName>
-  <lastName>string</lastName>
-  <email>string</email>
-  <password>string</password>
-  <phone>string</phone>
-  <userStatus>0</userStatus>
-</User>
-```
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-<h3 id="getUserByName-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|successful operation|[User](#schemauser)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## updateUser
-
-<a id="opIdupdateUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X PUT http://petstore.swagger.io/v2/user/{username} \
-  -H 'Content-Type: application/json'
-
-```
-
-```http
-PUT http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-Content-Type: application/json
-
-```
-
-```javascript
-var headers = {
-  'Content-Type':'application/json'
-
-};
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'put',
-
-  headers: headers,
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-const inputBody = '{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}';
-const headers = {
-  'Content-Type':'application/json'
-
-};
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'PUT',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-headers = {
-  'Content-Type' => 'application/json'
-}
-
-result = RestClient.put 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }, headers: headers
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json'
-}
-
-r = requests.put('http://petstore.swagger.io/v2/user/{username}', params={
-
-}, headers = headers)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("PUT");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    headers := map[string][]string{
-        "Content-Type": []string{"application/json"},
-        
-    }
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("PUT", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`PUT /user/{username}`
-
-*Updated user*
-
-This can only be done by the logged in user.
-
-> Body parameter
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-<h3 id="updateUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|name that need to be updated|
-|body|body|[User](#schemauser)|true|Updated user object|
-
-<h3 id="updateUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid user supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-## deleteUser
-
-<a id="opIddeleteUser"></a>
-
-> Code samples
-
-```shell
-# You can also use wget
-curl -X DELETE http://petstore.swagger.io/v2/user/{username}
-
-```
-
-```http
-DELETE http://petstore.swagger.io/v2/user/{username} HTTP/1.1
-Host: petstore.swagger.io
-
-```
-
-```javascript
-
-$.ajax({
-  url: 'http://petstore.swagger.io/v2/user/{username}',
-  method: 'delete',
-
-  success: function(data) {
-    console.log(JSON.stringify(data));
-  }
-})
-
-```
-
-```javascript--nodejs
-const request = require('node-fetch');
-
-fetch('http://petstore.swagger.io/v2/user/{username}',
-{
-  method: 'DELETE'
-
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```ruby
-require 'rest-client'
-require 'json'
-
-result = RestClient.delete 'http://petstore.swagger.io/v2/user/{username}',
-  params: {
-  }
-
-p JSON.parse(result)
-
-```
-
-```python
-import requests
-
-r = requests.delete('http://petstore.swagger.io/v2/user/{username}', params={
-
-)
-
-print r.json()
-
-```
-
-```java
-URL obj = new URL("http://petstore.swagger.io/v2/user/{username}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
-```
-
-```go
-package main
-
-import (
-       "bytes"
-       "net/http"
-)
-
-func main() {
-
-    data := bytes.NewBuffer([]byte{jsonReq})
-    req, err := http.NewRequest("DELETE", "http://petstore.swagger.io/v2/user/{username}", data)
-    req.Header = headers
-
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    // ...
-}
-
-```
-
-`DELETE /user/{username}`
-
-*Delete user*
-
-This can only be done by the logged in user.
-
-<h3 id="deleteUser-parameters">Parameters</h3>
-
-|Parameter|In|Type|Required|Description|
-|---|---|---|---|---|
-|username|path|string|true|The name that needs to be deleted|
-
-<h3 id="deleteUser-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid username supplied|None|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|None|
-
-<aside class="success">
-This operation does not require authentication
-</aside>
-
-# Schemas
-
-<h2 id="tocSorder">Order</h2>
-
-<a id="schemaorder"></a>
-
-```json
-{
-  "id": 0,
-  "petId": 0,
-  "quantity": 0,
-  "shipDate": "2018-04-24T13:02:08Z",
-  "status": "placed",
-  "complete": false
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|petId|integer(int64)|false|No description|
-|quantity|integer(int32)|false|No description|
-|shipDate|string(date-time)|false|No description|
-|status|string|false|Order Status|
-|complete|boolean|false|No description|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|placed|
-|status|approved|
-|status|delivered|
-
-<h2 id="tocScategory">Category</h2>
-
-<a id="schemacategory"></a>
-
-```json
-{
-  "id": 0,
-  "name": "string"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|name|string|false|No description|
-
-<h2 id="tocSuser">User</h2>
-
-<a id="schemauser"></a>
-
-```json
-{
-  "id": 0,
-  "username": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "email": "string",
-  "password": "string",
-  "phone": "string",
-  "userStatus": 0
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|username|string|false|No description|
-|firstName|string|false|No description|
-|lastName|string|false|No description|
-|email|string|false|No description|
-|password|string|false|No description|
-|phone|string|false|No description|
-|userStatus|integer(int32)|false|User Status|
-
-<h2 id="tocStag">Tag</h2>
-
-<a id="schematag"></a>
-
-```json
-{
-  "id": 0,
-  "name": "string"
-}
-```
-
-### Properties
-
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|name|string|false|No description|
-
-<h2 id="tocSpet">Pet</h2>
-
-<a id="schemapet"></a>
-
-```json
-{
-  "id": 0,
-  "category": {
-    "id": 0,
-    "name": "string"
-  },
-  "name": "doggie",
-  "photoUrls": [
-    "string"
-  ],
-  "tags": [
+    meta:
     {
-      "id": 0,
-      "name": "string"
+      status: 0,
+      message: "Payload valid"
+    },
+    client:
+    {
+      mobile_phone: "9031234567",
+      limit_amount: "0.00",
+      status: "new"
     }
-  ],
-  "status": "available"
 }
 ```
 
-### Properties
+| | | |
+-:|-:|:-|:-
+ |**status**<br> <font color="#939da3">integer</font> | <td colspan="2"> Код ответа.
+ |**message**<br> <font color="#939da3">string</font> | <td colspan="2"> Короткое текстовое описание ответа.
+ |**client**<br> <font color="#939da3">object</font> | <td colspan="2"> Объект, содержащий информацию о клиенте.
+ <td colspan="2" style="text-align:right">**mobile_phone**<br> <font color="#939da3">integer</font> | | Номер телефона клиента 10 цифр (без кода страны).
+ <td colspan="2" style="text-align:right">**limit_amount**<br> <font color="#939da3">float</font> | | Лимит средств, доступных клиенту, в рублях с копейками.
+ <td colspan="2" style="text-align:right">**status**<br> <font color="#939da3">string</font> | | Статус пользователя. Возможные значения:<br>`active` - пользователю доступна услуга оплаты частями на сумму `limit_amount`;<br>`inactive` - пользователю не доступна услуга оплаты частями;<br>`new` - новый пользователь, которому доступна услуга оплаты частями на сумму `limit_amount`.
 
-|Name|Type|Required|Description|
-|---|---|---|---|
-|id|integer(int64)|false|No description|
-|category|[Category](#schemacategory)|false|No description|
-|name|string|true|No description|
-|photoUrls|[string]|true|No description|
-|tags|[[Tag](#schematag)]|false|No description|
-|status|string|false|pet status in the store|
+## Checkout
+```ruby
+POST BASE_URL/factoring/v1/precheck/auth?store_id=STORE_ID2&signature=SIGNATURE
+```
 
-#### Enumerated Values
+Метод возвращает ссылку на iFrame для оформления заказа клиента. По завершению формы на адрес указанный в `callback_url` отправляется <a href="#callback_url">json ответ</a> с результатом оформления. В случае успешного оформления, средства в размере `amount` холдируются на счёте клиента в системе Рево.
 
-|Property|Value|
-|---|---|
-|status|available|
-|status|pending|
-|status|sold|
+В зависимости от информации, которая есть о пользователе в системе Рево, форма будет иметь различное число шагов (для этого нужно передавать `primary_phone`):
 
-<h2 id="tocSapiresponse">ApiResponse</h2>
+* Если номер телефона клиента не найден в базе Рево (новый клиент), либо расчёт лимита ещё не производился, то форма будет состоять из 3 шагов: регистрации (расчёта лимита), аутентификации по смс и оформления заказа.
+* Если номер телефона клиента найден в базе Рево (повторный клиент) и клиенту уже расчитан лимит, то форма будет состоять из 2 шагов: аутентификации по смс и оформления заказа.
 
-<a id="schemaapiresponse"></a>
+<aside class="success">
+Если клиент уже заполнял личные данные на сайте партнёра, их следует передать в запросе для автозаполнения соответствующих полей формы.
+</aside>
 
-```json
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
 {
-  "code": 0,
-  "type": "string",
-  "message": "string"
+  callback_url: "https://shop.ru/revo/decision",
+  redirect_url: "https://shop.ru/revo/redirect",
+  primary_phone: "9268180621",
+  primary_email : "ivan@gmail.com",
+  current_order: {
+    order_id: "R001233",
+    valid_till: "21.04.2017 12:08:01+03:00",
+    term: 3,
+    amount: 6700.00
+  },
+  person: {
+    first_name: "Петр",
+    surname: "Чернышев",
+    patronymic: "Александрович",
+    birth_date: "15.01.1975"
+  },
+  cart_items: [{
+    sku: "1", name: "prod9", price: "12", quantity: "1" },
+  { sku: "2", name: "prod3", price: "7", sale_price: "5", quantity: "1" }],
+  skip_result_page: true
 }
 ```
 
-### Properties
+| | | |
+-:|-:|:-|:-
+ |**callback_url** <br> <font color="#939da3">string</font> |<td colspan="2"> URL для ответа от Рево по решению для клиента.
+ |**redirect_url** <br> <font color="#939da3">string</font>	|<td colspan="2"> URL для редиректа после нажатия на кнопку/ссылку в форме Рево "Вернуться в интернет магазин".
+ |**current_order** <br> <font color="#939da3">object</font> |<td colspan="2"> Объект, содержащий информацию о заказе.
+<td colspan="2" style="text-align:right"> **order_id**<br> <font color="#939da3">string</font> | | Уникальный номер заказа. Не более 255 символов. Например, можно использовать нумерацию заказов в системе партнёра.
+<td colspan="2" style="text-align:right"> **valid_till**<br> <font color="#939da3">String, *optional*</font> | | Срок, в течении которого заказ считается актуальным (срок холдирования средств). По истечении срока заказ отменяется. Формат: `dd.mm.yyyy hh:mm:ss+hh:mm`, где после  "+" указывается часовой пояс относительно GMT. По умолчанию - 24 часа.
+ <td colspan="2" style="text-align:right"> **term**<br> <font color="#939da3">integer, *optional*</font> | | Срок рассрочки в месяцах.
+ <td colspan="2" style="text-align:right"> **amount**<br> <font color="#939da3">float</font> | | Сумма заказа в рублях с копейками.
+ |**primary_phone**<br> <font color="#939da3">integer, *optional*</font> |<td colspan="2"> Номер телефона клиента 10 цифр (без кода страны).
+ |**primary_email**<br> <font color="#939da3">string, *optional*</font> |<td colspan="2"> Email клиента.
+ |**person**<br> <font color="#939da3">object, *optional*</font> |<td colspan="2"> Объект, содержащий информацию о клиенте.
+ <td colspan="2" style="text-align:right"> **first_name**<br> <font color="#939da3">string, *optional*</font> | | Имя клиента.
+ <td colspan="2" style="text-align:right"> **surname**<br> <font color="#939da3">sring, *optional*</font> | | Фамилия клиента.
+ <td colspan="2" style="text-align:right"> **patronymic**<br> <font color="#939da3">string, *optional*</font> | | Отчество клиента.
+ <td colspan="2" style="text-align:right"> **birth_date**<br> <font color="#939da3">string, *optional*</font> | | Дата рождения клиента в формате `dd.mm.yyyy`.
+ |**cart_items**<br> <font color="#939da3">object, *optional*</font> |<td colspan="2"> Объект, содержащий информацию о заказе.
+ <td colspan="2" style="text-align:right"> **sku**<br> <font color="#939da3">string, *optional*</font> | | Складская учётная единица (stock keeping unit).
+ <td colspan="2" style="text-align:right"> **name**<br> <font color="#939da3">string, *optional*</font> | | Наименование товара.
+ <td colspan="2" style="text-align:right"> **price**<br> <font color="#939da3">float, *optional*</font> | | Цена товара.
+ <td colspan="2" style="text-align:right"> **sale_price**<br> <font color="#939da3">float, *optional*</font> | | Цена товара со скидкой (если есть).
+ <td colspan="2" style="text-align:right"> **quantity**<br> <font color="#939da3">integer</font> | | Количество товара.
+ |**skip_result_page**<br> <font color="#939da3">bool, *optional*</font> |<td colspan="2"> Флаг, который определяет будет ли отображена страница с результатом оформления в iFrame. По умолчанию - `false`.<br>`true` - по успешному завершению оформления сразу происходит редирект по `redirect_url`.<br>`false` - по успешному завершению оформления будет отображено окно с результатом.
 
-|Name|Type|Required|Description|
-|---|---|---|---|
-|code|integer(int32)|false|No description|
-|type|string|false|No description|
-|message|string|false|No description|
+ <aside class="success">
+ При передаче информации о предоплате клиента следует также использовать `skip_result_page`: выставлять `true` при необходимости клиентом совершить предоплату и передавать в `callback_url` адрес страницы предоплаты; выставлять `false` при наличии предоплаты.
+ </aside>
 
-<script type="application/ld+json">
+### Response Parameters
+
+> Пример ответа при успешной аутентификации.
+
+```jsonnet
 {
-  "@context": "http://schema.org/",
-  "@type": "WebAPI",
-  "description": ":dog: :cat: :rabbit: This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
-  "documentation": "https://mermade.github.io/shins/asyncapi.html",
-  "termsOfService": "http://swagger.io/terms/",
-  
-  "name": "Swagger Petstore"
+  status: 0,
+  message: "Payload valid",
+  iframe_url: "https://revo.ru/factoring/v1/form/6976174c5b6a1bb089d15b80e0a6afc62d4283fe"
 }
-</script>
+```
 
+<!-- > Пример ответа при неуспешной аутентификации.
+
+```jsonnet
+{
+  status: 20,
+  message: "Order order_id missing",
+}
+``` -->
+
+ | |
+-:|:-
+**status** <br> <font color="#939da3">integer</font> | Код ответа.
+**message** <br> <font color="#939da3">string</font> | Короткое текстовое описание ответа.
+**iframe_url** <br> <font color="#939da3">string</font>	| Cсылка на сгенерированный iFrame.
+
+<a name="callback_url"></a>
+### Callback parameters
+
+> Пример callback-а при успешном оформлении товара:
+
+```jsonnet
+{
+  order_id: "R107356",
+  decision: "approved",
+  amount: "6700.00",
+  prepayment_amount: "1000.00",
+  total_amount: "7700.00",
+  term: 3,
+  client:
+  {
+    primary_phone: "8880010203"
+    full_name: "Иванов Иван Иванович"
+  },
+  schedule:
+  [{
+    date: "01.01.2018",
+    amount: "2933.33"
+  },
+  {
+    date: "01.02.2018",
+    amount: "2933.33"
+  },
+  {
+    date: "01.03.2018",
+    amount: "2933.33"
+  }]
+}
+```
+
+| | | |
+-:|-:|:-|:-
+ |**order_id** <br> <font color="#939da3">string</font> |<td colspan="2"> Уникальный номер заказа. Не более 255 символов.
+ |**decision** <br> <font color="#939da3">string</font> |<td colspan="2"> Решение по выдаче рассрочки. При положительном решении - значение `approved`. При отрицательном решении - `declined`.
+ |**amount** <br> <font color="#939da3">float</font> |<td colspan="2"> Сумма к оплате частями в рублях с копейками.
+ |**prepayment_amount** <br> <font color="#939da3">float, *optional*</font> |<td colspan="2"> Сумма предоплаты в рублях с копейками.
+ |**total_amount** <br> <font color="#939da3">float, *optional*</font> |<td colspan="2"> Общая сумма заказа в рублях с копейками.
+ |**term** <br> <font color="#939da3">integer</font> |<td colspan="2"> Срок рассрочки в месяцах.
+ |**client** <br> <font color="#939da3">object</font> |<td colspan="2"> Объект, содержащий информацию о клиенте.
+<td colspan="2" style="text-align:right">**primary_phone** <br> <font color="#939da3">integer</font> | | Номер телефона клиента 10 цифр (без кода страны).
+<td colspan="2" style="text-align:right">**full_name**  <br> <font color="#939da3">string</font> | | ФИО через пробел.
+ |**schedule** <br> <font color="#939da3">object</font> |<td colspan="2"> Объект, содержащий информацию о графике платежей.
+<td colspan="2" style="text-align:right">**date** <br> <font color="#939da3">string</font> | | Дата платежа в формате `dd.mm.yyyy`.
+<td colspan="2" style="text-align:right">**amount** <br> <font color="#939da3">float</font> | | Сумма платежа в рублях с копейками.
+
+<aside class="success">
+При `decision` равном `declined` значение `amount` будет нулевое, а в `schedule` будет пустой массив.
+</aside>
+
+## Status
+
+```ruby
+POST BASE_URL/factoring/v1/status?store_id=STORE_ID2&signature=SIGNATURE
+```
+
+Метод возвращает информацию по статусу заказа.
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  order_id: "R107356"
+}
+```
+
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+
+### Response Parameters
+
+> Пример ответа, когда срок актуальности заказа ещё не вышел, решение по заказу (approved или declined) уже есть
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  current_order:
+  {
+    order_id: "R107356",
+    expired: false,
+    decision: "approved",
+    amount: "6700.00",
+    term: 3
+  }
+}
+```
+
+> Пример ответа, когда срок актуальности заказа ещё не вышел, решения по займу нет (клиент не прошёл процесс до конца)
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  current_order:
+  {
+    order_id: "R107356",
+    expired: "false"
+  }
+}
+```
+
+> Пример ответа, когда срок актуальности заказа истёк, решение по займу (Approve или declined) уже есть:
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  current_order:
+  {
+    order_id: "R107356",
+    expired: "true",
+    decision: "approved",
+    amount: "6700.00",
+    term: 3
+  }
+}
+```
+
+> Пример ответа, когда срок актуальности заказа истёк, решения по займу нет (клиент не прошел процесс до конца)
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  current_order:
+  {
+    order_id: "R107356",
+    expired: "true"
+  }
+}
+```
+
+| | | |
+-:|-:|:-|:-
+ |**status** <br> <font color="#939da3">integer</font> | <td colspan="2"> Код ответа.
+ |**message** <br> <font color="#939da3">string</font> | <td colspan="2"> Короткое текстовое описание ответа.
+ |**current_order** <br> <font color="#939da3">object</font> | <td colspan="2"> Объект, содержащий информацию о заказе.
+ <td colspan="2" style="text-align:right">**order_id** <br> <font color="#939da3">string</font> | | Уникальный номер заказа. Не более 255 символов.
+ <td colspan="2" style="text-align:right">**expired** <br> <font color="#939da3">bool</font> | | Флаг, отображающий статус актуальности заказа. Для актуальных заказов - `false`.
+ <td colspan="2" style="text-align:right">**decision** <br> <font color="#939da3">string</font> | | Информация по статусу заказа. Если заказ уже финализирован - `approved`. Если заказ ожидает финализации - `pending`. Если заказ отменили - `declined`.
+ <td colspan="2" style="text-align:right">**amount** <br> <font color="#939da3">float</font> | | Сумма в рублях с копейками.
+ <td colspan="2" style="text-align:right">**term** <br> <font color="#939da3">integer</font> | | Срок рассрочки в месяцах.
+
+## Change
+
+```ruby
+POST BASE_URL/factoring/v1/precheck/change?store_id=STORE_ID2&signature=SIGNATURE
+```
+
+Метод для изменения суммы уже созданного заказа.
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  order_id: "R107356",
+  amount: "5600.00"
+}
+```
+
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+**amount** <br> <font color="#939da3">float</font> | Сумма в рублях с копейками.
+
+### Response parameters
+
+> Пример ответа при успешном изменении заказа:
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid",
+  schedule:
+  [{
+    date: "01.01.2018",
+    amount: "2933.33"
+  },
+  {
+    date: "01.02.2018",
+    amount: "2933.33"
+  },
+  {
+    date: "01.03.2018",
+    amount: "2933.33"
+  }]
+}
+```
+
+| | | |
+-:|-:|:-|:-
+ |**status** <br> <font color="#939da3">integer</font> |<td colspan="2"> Код ответа.
+ |**message** <br> <font color="#939da3">string</font> |<td colspan="2"> Короткое текстовое описание ответа.
+ |**schedule** <br> <font color="#939da3">object</font> |<td colspan="2"> Объект, содержащий информацию о графике платежей.
+<td colspan="2" style="text-align:right">**date** <br> <font color="#939da3">string</font> | | Дата платежа в формате `dd.mm.yyyy`.
+<td colspan="2" style="text-align:right">**amount** <br> <font color="#939da3">float</font> | | Сумма платежа в рублях с копейками.
+
+## Cancel
+
+```ruby
+POST BASE_URL/factoring/v1/precheck/cancel?store_id=STORE_ID2&signature=SIGNATURE
+```
+
+Метод для отмены заказа. При отмене у клиента разблокируются ранее захолдированные средства.
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  order_id: "R107356"
+}
+```
+
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+
+### Response Parameters
+
+> Пример ответа, когда файл успешно подгружен
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid"
+}
+```
+
+ | |
+-:|:-
+**status** <br> <font color="#939da3">integer</font> | Код ответа.
+**message** <br> <font color="#939da3">string</font> | Короткое текстовое описание ответа.
+
+## Finish
+
+```ruby
+POST BASE_URL/factoring/v1/precheck/finish?store_id=STORE_ID2&signature=SIGNATURE
+```
+
+Метод для финализации заказа путём передачи договора купли-продажи на обслуживание в Рево. Фискальный документ должен быть передан по HTTP через multipart с названием `check`.
+
+<aside class="notice">
+При попытке финализации заявки с истекшим сроком `valid_till`, будет вызван метод `cancel`.
+</aside>
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  order_id: "R107356",
+  amount: "6700.00",
+  check_number: "ZDDS3123F"
+}
+```
+
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+**amount** <br> <font color="#939da3">float</font> | Сумма в рублях с копейками.
+**check_number** <br> <font color="#939da3">string</font> | Номер фискального документа в системе партнёра (например, номер чека).
+
+### Response Parameters
+
+> Пример ответа, когда файл успешно подгружен
+
+```jsonnet
+{
+  status: 0,
+  message: "Payload valid"
+}
+```
+
+ | |
+-:|:-
+**status** <br> <font color="#939da3">integer</font> | Код ответа.
+**message** <br> <font color="#939da3">string</font> | Короткое текстовое описание ответа.
+
+## Return
+
+```ruby
+POST BASE_URL/factoring/v1/return?store_id=STORE_ID2&signature=SIGNATURE
+```
+
+Метод для осуществления процедуры возврата заказа.
+
+### Parameters
+
+> Пример запроса в формате json
+
+```jsonnet
+{
+  order_id: "R001233",
+  sum: "2010.00"
+}
+```
+
+ | |
+-:|:-
+**order_id** <br> <font color="#939da3">string</font> | Уникальный номер заказа. Не более 255 символов.
+**sum** <br> <font color="#939da3">float</font> | Сумма возврата в рублях с копейками. Возврат может быть как полным, так и частичным.
+
+### Response Parameters
+
+> Пример ответа при успешной обработке запроса на возврат
+
+```jsonnet
+{
+  status: "0",
+  message: "Payload valid"
+}
+```
+
+> Пример ответа при неуспешной обработке запроса на возврат
+
+```jsonnet
+{
+  status: "10",
+  message: "JSON decode error"
+}
+```
+
+ | |
+-:|:-
+**status** <br> <font color="#939da3">integer</font> | Код ответа.
+**message** <br> <font color="#939da3">string</font> | Короткое текстовое описание ответа.
+
+# Коды ошибок
+
+Код | Описание
+-:|:-
+**0**  | Payload valid
+**10**  | JSON decode error
+**20**  | Order `order_id` missing
+**21**  | Wrong order `order_id` format
+**22**  | Order exists
+**24**  | Order with specified id not found
+**30**  | Wrong order `order_sum` format
+**40**  | Order `callback_url` missing
+**32**  | Order amount is different from the amount specified before
+**41**  | Order `redirect_url` missing
+**50**  | Store id is missing
+**51**  | Store not found
+**60**  | `Signature` missing
+**61**  | `Signature` wrong
+**70**  | Phone number is different
+**71**  | Client has not enough limit
+**80**  | Unable to finish - order is already finished/canceled
+**82**  | Unable to change - order is already finished/canceled
+**81**  | Unable to cancel - order is already finished/canceled
+**100** | At the moment the server cannot process your request
+
+# Тестирование и отладка
+
+Тестирование и отладка интеграции производятся на demo сервере (https://demo.revoplus.ru). При заполнении номера телефона в анкете рекомендуется использовать несуществующий префикс оператора 888, чтобы sms сообщения не отправлялись реальным людям. На production сервере использовать такой префикс нельзя.
+
+Все коды подтверждения и пин-коды `8888`.
+
+* Для получения отказ при использовании <a href="#Registration">`Registration`</a> необходимо указать телефон, начинающийся с 88821.
+
+* Для получения одобрения при использовании <a href="#Registration">`Registration`</a> необходимо указать телефон, начинающийся с 888, кроме 88821.
+
+* Для тестирования на production сервере код задаётся в настройках магазина партнёра. Например, это может быть 7777, вместо 8888.
+
+* В анкете идет проверка по ФИО + дате рождения или номеру паспорта на совпадение с существующим клиентом, поэтому при тестировании необходимо вводить различные данные в эти поля.
+
+# Описание iFrame REVO
+
+* ФИО - заполняется кириллицей
+* возраст - не менее 18 лет
+
+<aside class="warning">
+Данный раздел находится в стадии разработки.
+</aside>
+
+# Guides
+
+## Вызов iFrame
+
+```javascript
+REVO.Form.show(iframe_url, target_selector);
+```
+
+Полученную с помощью метода <a href="#Registration">`Registration`</a> или <a href="#Checkout">`Checkout`</a> ссылку на iFrame необходимо передать в js метод плагина REVO.
+
+`iframe_url` – адрес открываемого iFrame, обязательный параметр.
+`target_selector` – селектор элемента, внутрь которого должен быть вставлен iFrame.
+
+Далее работает предоставленный Рево плагин js (реализован в виде модуля REVO), который вставляет ``<iframe src= iframe_url />`` и производит манипуляции с этим iFrame.
+
+Плагин доступен по адресу: `https://{BASE_URI}/javascripts/iframe/v2/revoiframe.js` и его можно добавить на страницу интернет магазина.
+
+```html
+<script src="https://{BASE_URI}/javascripts/iframe/v2/revoiframe.js"></script>
+```
+
+Также данный плагин предоставляет возможность получения событий: закрытия формы - `onClose`, загрузки формы - `onLoad` и принятия решения по заявке - `onResult`.
+
+```javascript
+REVO.Form.onClose(function () { alert('closed'); });
+REVO.Form.onLoad(function () { console.log('frame loaded'); });
+REVO.Form.onResult(function() { console.log('result'); });
+```
+<aside class="success">
+При необходимости отобразить iFrame на отдельной странице следует напрямую открывать `iframe_url`. Настройка фона этой странице производится на стороне Рево.
+</aside>
